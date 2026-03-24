@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proyectos Guion — fotovideorostik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0b0c0e;
+      --surface: #111318;
+      --border: #1e2128;
+      --accent: #e8ff3c;
+      --accent2: #3cffe8;
+      --text: #d4d8e2;
+      --muted: #555c6e;
+      --card-hover: #161a22;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Grid noise background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(232,255,60,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,255,60,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 64px 0 48px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 48px;
+    }
+
+    .label {
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 10vw, 7rem);
+      line-height: 0.9;
+      color: #fff;
+      letter-spacing: 0.02em;
+    }
+
+    h1 span {
+      color: var(--accent);
+    }
+
+    .subtitle {
+      margin-top: 20px;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    .subtitle a {
+      color: var(--accent2);
+      text-decoration: none;
+    }
+
+    /* ── Status bar ── */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 36px;
+      letter-spacing: 0.08em;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--muted);
+      animation: pulse 2s infinite;
+    }
+
+    .dot.active { background: var(--accent); }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* ── Grid ── */
+    #projects-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    /* ── Card ── */
+    .project-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 20px 24px;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+      animation: fadeUp 0.4s both;
+    }
+
+    .project-card:hover {
+      background: var(--card-hover);
+      border-color: var(--accent);
+      transform: translateX(4px);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .card-index {
+      font-size: 10px;
+      color: var(--muted);
+      min-width: 24px;
+      letter-spacing: 0.1em;
+    }
+
+    .card-name {
+      font-size: 14px;
+      font-weight: 400;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-name em {
+      color: var(--accent);
+      font-style: normal;
+    }
+
+    .card-arrow {
+      font-size: 18px;
+      color: var(--muted);
+      transition: color 0.2s, transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    .project-card:hover .card-arrow {
+      color: var(--accent);
+      transform: translateX(4px);
+    }
+
+    /* ── Loading / Error ── */
+    .state-msg {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--muted);
+      padding: 32px 0;
+    }
+
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg { color: #ff6b6b; }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 64px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    footer a {
+      color: var(--accent2);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <p class="label">fotovideorostik · GitHub Pages</p>
+      <h1>PROYECTOS<br /><span>GUION</span></h1>
+      <p class="subtitle">
+        Todas las páginas desplegadas en
+        <a href="https://github.com/fotovideorostik" target="_blank">github.com/fotovideorostik</a>
+        que empiezan por <strong>Guion</strong>.
+      </p>
+    </header>
+
+    <div class="status-bar">
+      <span class="dot active" id="status-dot"></span>
+      <span id="status-text">Cargando repositorios...</span>
+    </div>
+
+    <div id="projects-grid">
+      <div class="state-msg">
+        <div class="spinner"></div>
+        <span>Consultando la API de GitHub…</span>
+      </div>
+    </div>
+
+    <footer>
+      <span>Actualizado automáticamente vía GitHub API</span>
+      <a href="https://github.com/fotovideorostik" target="_blank">↗ Ver todos los repos</a>
+    </footer>
+  </div>
+
+  <script>
+    const USERNAME = 'fotovideorostik';
+    const PREFIX   = 'Guion';
+    const grid     = document.getElementById('projects-grid');
+    const statusDot  = document.getElementById('status-dot');
+    const statusText = document.getElementById('status-text');
+
+    async function fetchAllRepos() {
+      let repos = [];
+      let page  = 1;
+      while (true) {
+        const r = await fetch(
+          `https://api.github.com/users/${USERNAME}/repos?per_page=100&page=${page}`
+        );
+        if (!r.ok) throw new Error(`GitHub API error: ${r.status}`);
+        const data = await r.json();
+        repos = repos.concat(data);
+        if (data.length < 100) break;
+        page++;
+      }
+      return repos;
+    }
+
+    function render(repos) {
+      const guion = repos
+        .filter(r => r.name.startsWith(PREFIX))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      if (guion.length === 0) {
+        grid.innerHTML = `<div class="state-msg error-msg">No se encontraron repositorios que empiecen por "${PREFIX}".</div>`;
+        statusDot.classList.remove('active');
+        statusText.textContent = '0 proyectos encontrados';
+        return;
+      }
+
+      statusText.textContent = `${guion.length} proyecto${guion.length > 1 ? 's' : ''} encontrado${guion.length > 1 ? 's' : ''}`;
+
+      grid.innerHTML = guion.map((repo, i) => {
+        const url  = `https://${USERNAME}.github.io/${repo.name}/`;
+        const name = repo.name;
+        // Highlight the "Guion" prefix
+        const highlighted = `<em>${PREFIX}</em>${name.slice(PREFIX.length)}`;
+        const delay = `animation-delay:${i * 60}ms`;
+        return `
+          <a class="project-card" href="${url}" target="_blank" rel="noopener" style="${delay}">
+            <div class="card-left">
+              <span class="card-index">${String(i + 1).padStart(2, '0')}</span>
+              <span class="card-name">${highlighted}</span>
+            </div>
+            <span class="card-arrow">→</span>
+          </a>`;
+      }).join('');
+    }
+
+    (async () => {
+      try {
+        const repos = await fetchAllRepos();
+        render(repos);
+      } catch (err) {
+        grid.innerHTML = `<div class="state-msg error-msg">Error al cargar repositorios: ${err.message}</div>`;
+        statusDot.classList.remove('active');
+        statusText.textContent = 'Error de conexión';
+      }
+    })();
+  </script>
+</body>
+</html>
