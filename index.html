@@ -4,299 +4,278 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Proyectos Guion — fotovideorostik</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0b0c0e;
-      --surface: #111318;
-      --border: #1e2128;
-      --accent: #e8ff3c;
-      --accent2: #3cffe8;
-      --text: #d4d8e2;
-      --muted: #555c6e;
-      --card-hover: #161a22;
+      --color-bg: #ffffff;
+      --color-bg-secondary: #f5f5f3;
+      --color-bg-tertiary: #eeede9;
+      --color-text-primary: #1a1a18;
+      --color-text-secondary: #5a5a56;
+      --color-text-tertiary: #9a9a94;
+      --color-border: rgba(0,0,0,0.10);
+      --color-border-secondary: rgba(0,0,0,0.18);
+      --radius-md: 8px;
+      --radius-lg: 12px;
     }
-
-    html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'DM Mono', monospace;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f0efe9;
+      color: var(--color-text-primary);
+      padding: 2rem 1rem;
+      line-height: 1.6;
     }
 
-    /* Grid noise background */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(232,255,60,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(232,255,60,0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .container {
-      position: relative;
-      z-index: 1;
-      max-width: 860px;
+    .page {
+      max-width: 820px;
       margin: 0 auto;
-      padding: 0 24px 80px;
+      background: var(--color-bg);
+      border-radius: 16px;
+      padding: 2.5rem;
+      border: 0.5px solid var(--color-border-secondary);
     }
 
     /* ── Header ── */
-    header {
-      padding: 64px 0 48px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 48px;
-    }
-
-    .label {
+    .badge {
+      display: inline-block;
       font-size: 11px;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 16px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: var(--color-bg-secondary);
+      color: var(--color-text-secondary);
+      margin-bottom: 10px;
+      letter-spacing: 0.04em;
+      border: 0.5px solid var(--color-border-secondary);
     }
 
-    h1 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(3.5rem, 10vw, 7rem);
-      line-height: 0.9;
-      color: #fff;
-      letter-spacing: 0.02em;
+    .page-title {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
     }
 
-    h1 span {
-      color: var(--accent);
+    .page-subtitle {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      margin-bottom: 1.5rem;
     }
 
-    .subtitle {
-      margin-top: 20px;
-      font-size: 12px;
-      color: var(--muted);
-      letter-spacing: 0.05em;
-    }
-
-    .subtitle a {
-      color: var(--accent2);
-      text-decoration: none;
+    .page-subtitle a {
+      color: var(--color-text-secondary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
     }
 
     /* ── Status bar ── */
     .status-bar {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 7px;
       font-size: 11px;
-      color: var(--muted);
-      margin-bottom: 36px;
-      letter-spacing: 0.08em;
+      font-weight: 600;
+      color: var(--color-text-tertiary);
+      margin-bottom: 1.75rem;
+      letter-spacing: 0.03em;
     }
 
     .dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: var(--muted);
-      animation: pulse 2s infinite;
+      background: var(--color-text-tertiary);
+      flex-shrink: 0;
     }
 
-    .dot.active { background: var(--accent); }
+    .dot.active {
+      background: #4caf50;
+      animation: pulse 2.5s infinite;
+    }
 
     @keyframes pulse {
       0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
+      50% { opacity: 0.35; }
     }
 
-    /* ── Grid ── */
+    /* ── Groups ── */
     #projects-grid {
       display: grid;
-      gap: 28px;
+      gap: 1.75rem;
     }
 
-    /* ── Group ── */
     .group-block {
       display: grid;
-      gap: 8px;
+      gap: 6px;
     }
 
     .group-header {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       margin-bottom: 4px;
     }
 
     .group-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.1rem;
-      letter-spacing: 0.1em;
-      color: var(--accent2);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-secondary);
+      white-space: nowrap;
     }
 
     .group-count {
       font-size: 10px;
-      color: var(--muted);
-      letter-spacing: 0.1em;
-      background: var(--border);
-      border-radius: 2px;
-      padding: 2px 6px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: var(--color-bg-secondary);
+      color: var(--color-text-tertiary);
+      border: 0.5px solid var(--color-border-secondary);
+      white-space: nowrap;
     }
 
     .group-line {
       flex: 1;
-      height: 1px;
-      background: var(--border);
+      height: 0.5px;
+      background: var(--color-border-secondary);
     }
 
-    /* ── Ungrouped section ── */
-    .ungrouped-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 4px;
-    }
-
-    .ungrouped-title {
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    /* ── Card ── */
+    /* ── Cards ── */
     .project-card {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 20px 24px;
+      gap: 14px;
+      background: var(--color-bg);
+      border: 0.5px solid var(--color-border-secondary);
+      border-radius: var(--radius-lg);
+      padding: 13px 16px;
       text-decoration: none;
       color: inherit;
-      transition: background 0.2s, border-color 0.2s, transform 0.15s;
-      animation: fadeUp 0.4s both;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+      animation: fadeUp 0.3s both;
     }
 
     .project-card:hover {
-      background: var(--card-hover);
-      border-color: var(--accent);
-      transform: translateX(4px);
+      background: var(--color-bg-secondary);
+      border-color: rgba(0,0,0,0.25);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
     }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(12px); }
+      from { opacity: 0; transform: translateY(7px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
     .card-left {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
       min-width: 0;
     }
 
     .card-index {
       font-size: 10px;
-      color: var(--muted);
-      min-width: 24px;
-      letter-spacing: 0.1em;
+      font-weight: 600;
+      color: var(--color-text-tertiary);
+      min-width: 18px;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
     }
 
     .card-name {
-      font-size: 14px;
-      font-weight: 400;
-      color: #fff;
+      font-size: 13px;
+      color: var(--color-text-primary);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .card-name em {
-      color: var(--accent);
-      font-style: normal;
-    }
+    .n-prefix { font-weight: 600; color: var(--color-text-secondary); }
+    .n-sep    { color: var(--color-text-tertiary); margin: 0 3px; }
+    .n-client { font-weight: 500; color: var(--color-text-secondary); }
+    .n-title  { color: var(--color-text-primary); font-weight: 400; }
 
     .card-arrow {
-      font-size: 18px;
-      color: var(--muted);
-      transition: color 0.2s, transform 0.2s;
+      font-size: 14px;
+      color: var(--color-text-tertiary);
+      transition: color 0.15s, transform 0.15s;
       flex-shrink: 0;
     }
 
     .project-card:hover .card-arrow {
-      color: var(--accent);
-      transform: translateX(4px);
+      color: var(--color-text-primary);
+      transform: translateX(2px);
     }
 
     /* ── Loading / Error ── */
     .state-msg {
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 12px;
-      color: var(--muted);
-      padding: 32px 0;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--color-text-tertiary);
+      padding: 24px 0;
     }
 
     .spinner {
       width: 14px;
       height: 14px;
-      border: 2px solid var(--border);
-      border-top-color: var(--accent);
+      border: 2px solid var(--color-bg-tertiary);
+      border-top-color: var(--color-text-secondary);
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
     }
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .error-msg { color: #ff6b6b; }
+    .error-msg { color: #c0392b; }
 
     /* ── Footer ── */
-    footer {
-      margin-top: 64px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
+    .footer {
+      margin-top: 2rem;
+      padding-top: 1.25rem;
+      border-top: 0.5px solid var(--color-border);
       font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 0.08em;
+      color: var(--color-text-tertiary);
       display: flex;
       justify-content: space-between;
+      align-items: center;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
     }
 
-    footer a {
-      color: var(--accent2);
-      text-decoration: none;
+    .footer a {
+      color: var(--color-text-secondary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    @media (max-width: 520px) {
+      .page { padding: 1.5rem; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <p class="label">fotovideorostik · GitHub Pages</p>
-      <h1>PROYECTOS<br /><span>GUION</span></h1>
-      <p class="subtitle">
-        Todas las páginas desplegadas en
-        <a href="https://github.com/fotovideorostik" target="_blank">github.com/fotovideorostik</a>
-        que empiezan por <strong>Guion</strong>.
-      </p>
-    </header>
+  <div class="page">
+
+    <span class="badge">fotovideorostik · GitHub Pages</span>
+    <div class="page-title">Índice de proyectos — Guion</div>
+    <div class="page-subtitle">
+      Todas las páginas desplegadas en
+      <a href="https://github.com/fotovideorostik" target="_blank">github.com/fotovideorostik</a>
+      que empiezan por <strong>Guion</strong>.
+    </div>
 
     <div class="status-bar">
       <span class="dot active" id="status-dot"></span>
-      <span id="status-text">Cargando repositorios...</span>
+      <span id="status-text">Cargando repositorios…</span>
     </div>
 
     <div id="projects-grid">
@@ -306,27 +285,31 @@
       </div>
     </div>
 
-    <footer>
+    <div class="footer">
       <span>Actualizado automáticamente vía GitHub API</span>
       <a href="https://github.com/fotovideorostik" target="_blank">↗ Ver todos los repos</a>
-    </footer>
+    </div>
+
   </div>
 
   <script>
-    const USERNAME = 'fotovideorostik';
-    const PREFIX   = 'Guion';
-    const grid     = document.getElementById('projects-grid');
-    const statusDot  = document.getElementById('status-dot');
-    const statusText = document.getElementById('status-text');
+    const USERNAME       = 'fotovideorostik';
+    const PREFIX         = 'Guion';
+    const EXCLUDE        = ['GuionIndex'];  // repos to hide — add more here if needed
+    const MIN_GROUP_SIZE = 2;
 
+    const grid      = document.getElementById('projects-grid');
+    const statusDot = document.getElementById('status-dot');
+    const statusTxt = document.getElementById('status-text');
+
+    /* ── Fetch all repos (handles pagination) ── */
     async function fetchAllRepos() {
-      let repos = [];
-      let page  = 1;
+      let repos = [], page = 1;
       while (true) {
         const r = await fetch(
           `https://api.github.com/users/${USERNAME}/repos?per_page=100&page=${page}`
         );
-        if (!r.ok) throw new Error(`GitHub API error: ${r.status}`);
+        if (!r.ok) throw new Error(`GitHub API ${r.status}`);
         const data = await r.json();
         repos = repos.concat(data);
         if (data.length < 100) break;
@@ -335,67 +318,80 @@
       return repos;
     }
 
-    // Repos to exclude (this page itself and any others you want hidden)
-    const EXCLUDE = ['GuionIndex'];
-
-    /**
-     * Detects groups from repo names formatted as "Guion-ClientName..." or "GuionClientName...".
-     * A group must have at least MIN_GROUP_SIZE repos to be shown as a group.
-     */
-    const MIN_GROUP_SIZE = 2;
-
-    function detectGroups(names) {
-      const counts = {};
-      for (const name of names) {
-        // Strip the "Guion" prefix
-        const rest = name.slice(PREFIX.length);
-        // Match "Guion-Foo..." → segment = "Foo"
-        // Match "GuionFoo..."  → segment = "Foo" (first CamelCase word or up to separator)
-        let segment = null;
-        const dashMatch = rest.match(/^-([A-Za-z0-9]+)/);
-        if (dashMatch) {
-          segment = dashMatch[1];
-        } else {
-          // CamelCase: take the first word (sequence of caps + lowers)
-          const camelMatch = rest.match(/^([A-Z][a-z0-9]+)/);
-          if (camelMatch) segment = camelMatch[1];
-        }
-        if (segment && segment.length > 1) {
-          counts[segment] = (counts[segment] || 0) + 1;
-        }
-      }
-      // Only keep segments that appear >= MIN_GROUP_SIZE times
-      return Object.fromEntries(
-        Object.entries(counts).filter(([, v]) => v >= MIN_GROUP_SIZE)
-      );
-    }
-
-    function getSegment(name, validGroups) {
+    /* ── Extract the segment token right after "Guion" ── */
+    function extractSegment(name) {
       const rest = name.slice(PREFIX.length);
-      const dashMatch = rest.match(/^-([A-Za-z0-9]+)/);
-      if (dashMatch && validGroups[dashMatch[1]]) return dashMatch[1];
-      const camelMatch = rest.match(/^([A-Z][a-z0-9]+)/);
-      if (camelMatch && validGroups[camelMatch[1]]) return camelMatch[1];
+      const dash  = rest.match(/^-([A-Za-z0-9]+)/);
+      if (dash)  return dash[1];
+      const camel = rest.match(/^([A-Z][a-z0-9]+)/);
+      if (camel) return camel[1];
       return null;
     }
 
-    function cardHTML(repo, index) {
-      const url  = `https://${USERNAME}.github.io/${repo.name}/`;
-      const name = repo.name;
-      const highlighted = `<em>${PREFIX}</em>${name.slice(PREFIX.length)}`;
-      const delay = `animation-delay:${index * 55}ms`;
+    /* ── Detect which segments appear >= MIN_GROUP_SIZE times ── */
+    function detectGroups(names) {
+      const counts = {};
+      for (const n of names) {
+        const seg = extractSegment(n);
+        if (seg && seg.length > 1) counts[seg] = (counts[seg] || 0) + 1;
+      }
+      return new Set(
+        Object.entries(counts).filter(([, v]) => v >= MIN_GROUP_SIZE).map(([k]) => k)
+      );
+    }
+
+    /* ── Assign a repo to its group (or null) ── */
+    function repoGroup(name, validGroups) {
+      const seg = extractSegment(name);
+      return seg && validGroups.has(seg) ? seg : null;
+    }
+
+    /* ── Build a human-readable suffix after stripping prefix + group ── */
+    function humanSuffix(name, group) {
+      let rest = name.slice(PREFIX.length);
+      if (group) {
+        const dp = `-${group}`;
+        rest = rest.startsWith(dp)    ? rest.slice(dp.length)
+             : rest.startsWith(group) ? rest.slice(group.length)
+             : rest;
+      }
+      return rest
+        .replace(/^-/, '')
+        .replace(/-/g, ' ')
+        .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+        .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+        .trim();
+    }
+
+    /* ── Single card HTML ── */
+    function cardHTML(repo, index, group) {
+      const url    = `https://${USERNAME}.github.io/${repo.name}/`;
+      const suffix = humanSuffix(repo.name, group);
+      const delay  = `animation-delay:${index * 50}ms`;
+
+      let nameHTML;
+      if (group && suffix) {
+        nameHTML = `<span class="n-prefix">Guion</span><span class="n-sep">·</span><span class="n-client">${group}</span><span class="n-sep">·</span><span class="n-title">${suffix}</span>`;
+      } else if (group) {
+        nameHTML = `<span class="n-prefix">Guion</span><span class="n-sep">·</span><span class="n-client">${group}</span>`;
+      } else if (suffix) {
+        nameHTML = `<span class="n-prefix">Guion</span><span class="n-sep">·</span><span class="n-title">${suffix}</span>`;
+      } else {
+        nameHTML = `<span class="n-prefix">Guion</span>`;
+      }
+
       return `
         <a class="project-card" href="${url}" target="_blank" rel="noopener" style="${delay}">
           <div class="card-left">
             <span class="card-index">${String(index + 1).padStart(2, '0')}</span>
-            <span class="card-name">${highlighted}</span>
+            <span class="card-name">${nameHTML}</span>
           </div>
           <span class="card-arrow">→</span>
         </a>`;
     }
 
+    /* ── Main render ── */
     function render(repos) {
-      // 1. Filter: only Guion* repos, exclude blacklist
       const guion = repos
         .filter(r => r.name.startsWith(PREFIX) && !EXCLUDE.includes(r.name))
         .sort((a, b) => a.name.localeCompare(b.name));
@@ -403,60 +399,49 @@
       if (guion.length === 0) {
         grid.innerHTML = `<div class="state-msg error-msg">No se encontraron repositorios que empiecen por "${PREFIX}".</div>`;
         statusDot.classList.remove('active');
-        statusText.textContent = '0 proyectos encontrados';
+        statusTxt.textContent = '0 proyectos encontrados';
         return;
       }
 
-      statusText.textContent = `${guion.length} proyecto${guion.length !== 1 ? 's' : ''} encontrado${guion.length !== 1 ? 's' : ''}`;
+      statusTxt.textContent = `${guion.length} proyecto${guion.length !== 1 ? 's' : ''} encontrado${guion.length !== 1 ? 's' : ''}`;
 
-      // 2. Detect groups
       const validGroups = detectGroups(guion.map(r => r.name));
 
-      // 3. Bucket repos into groups and ungrouped
-      const grouped   = {}; // { segmentName: [repo, ...] }
+      const grouped   = {};
       const ungrouped = [];
-
       for (const repo of guion) {
-        const seg = getSegment(repo.name, validGroups);
-        if (seg) {
-          if (!grouped[seg]) grouped[seg] = [];
-          grouped[seg].push(repo);
-        } else {
-          ungrouped.push(repo);
-        }
+        const g = repoGroup(repo.name, validGroups);
+        if (g) { (grouped[g] = grouped[g] || []).push(repo); }
+        else ungrouped.push(repo);
       }
 
-      let cardIndex = 0;
-      let html = '';
+      let idx = 0, html = '';
 
-      // 4. Render each group
       for (const [groupName, groupRepos] of Object.entries(grouped).sort()) {
         html += `
           <div class="group-block">
             <div class="group-header">
               <span class="group-title">${groupName}</span>
-              <span class="group-count">${groupRepos.length} repo${groupRepos.length !== 1 ? 's' : ''}</span>
+              <span class="group-count">${groupRepos.length} ${groupRepos.length !== 1 ? 'guiones' : 'guión'}</span>
               <span class="group-line"></span>
             </div>
-            ${groupRepos.map(r => cardHTML(r, cardIndex++)).join('')}
+            ${groupRepos.map(r => cardHTML(r, idx++, groupName)).join('')}
           </div>`;
       }
 
-      // 5. Render ungrouped
       if (ungrouped.length > 0) {
+        const hasGroups = Object.keys(grouped).length > 0;
         html += `
           <div class="group-block">
-            <div class="ungrouped-header">
-              <span class="ungrouped-title">Otros</span>
-              <span class="group-line"></span>
-            </div>
-            ${ungrouped.map(r => cardHTML(r, cardIndex++)).join('')}
+            ${hasGroups ? `<div class="group-header"><span class="group-title">Otros</span><span class="group-line"></span></div>` : ''}
+            ${ungrouped.map(r => cardHTML(r, idx++, null)).join('')}
           </div>`;
       }
 
       grid.innerHTML = html;
     }
 
+    /* ── Boot ── */
     (async () => {
       try {
         const repos = await fetchAllRepos();
@@ -464,7 +449,7 @@
       } catch (err) {
         grid.innerHTML = `<div class="state-msg error-msg">Error al cargar repositorios: ${err.message}</div>`;
         statusDot.classList.remove('active');
-        statusText.textContent = 'Error de conexión';
+        statusTxt.textContent = 'Error de conexión';
       }
     })();
   </script>
