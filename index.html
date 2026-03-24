@@ -119,7 +119,57 @@
     /* ── Grid ── */
     #projects-grid {
       display: grid;
+      gap: 28px;
+    }
+
+    /* ── Group ── */
+    .group-block {
+      display: grid;
+      gap: 8px;
+    }
+
+    .group-header {
+      display: flex;
+      align-items: center;
       gap: 12px;
+      margin-bottom: 4px;
+    }
+
+    .group-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.1em;
+      color: var(--accent2);
+    }
+
+    .group-count {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      background: var(--border);
+      border-radius: 2px;
+      padding: 2px 6px;
+    }
+
+    .group-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Ungrouped section ── */
+    .ungrouped-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+
+    .ungrouped-title {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
     }
 
     /* ── Card ── */
@@ -285,9 +335,69 @@
       return repos;
     }
 
+    // Repos to exclude (this page itself and any others you want hidden)
+    const EXCLUDE = ['GuionIndex'];
+
+    /**
+     * Detects groups from repo names formatted as "Guion-ClientName..." or "GuionClientName...".
+     * A group must have at least MIN_GROUP_SIZE repos to be shown as a group.
+     */
+    const MIN_GROUP_SIZE = 2;
+
+    function detectGroups(names) {
+      const counts = {};
+      for (const name of names) {
+        // Strip the "Guion" prefix
+        const rest = name.slice(PREFIX.length);
+        // Match "Guion-Foo..." → segment = "Foo"
+        // Match "GuionFoo..."  → segment = "Foo" (first CamelCase word or up to separator)
+        let segment = null;
+        const dashMatch = rest.match(/^-([A-Za-z0-9]+)/);
+        if (dashMatch) {
+          segment = dashMatch[1];
+        } else {
+          // CamelCase: take the first word (sequence of caps + lowers)
+          const camelMatch = rest.match(/^([A-Z][a-z0-9]+)/);
+          if (camelMatch) segment = camelMatch[1];
+        }
+        if (segment && segment.length > 1) {
+          counts[segment] = (counts[segment] || 0) + 1;
+        }
+      }
+      // Only keep segments that appear >= MIN_GROUP_SIZE times
+      return Object.fromEntries(
+        Object.entries(counts).filter(([, v]) => v >= MIN_GROUP_SIZE)
+      );
+    }
+
+    function getSegment(name, validGroups) {
+      const rest = name.slice(PREFIX.length);
+      const dashMatch = rest.match(/^-([A-Za-z0-9]+)/);
+      if (dashMatch && validGroups[dashMatch[1]]) return dashMatch[1];
+      const camelMatch = rest.match(/^([A-Z][a-z0-9]+)/);
+      if (camelMatch && validGroups[camelMatch[1]]) return camelMatch[1];
+      return null;
+    }
+
+    function cardHTML(repo, index) {
+      const url  = `https://${USERNAME}.github.io/${repo.name}/`;
+      const name = repo.name;
+      const highlighted = `<em>${PREFIX}</em>${name.slice(PREFIX.length)}`;
+      const delay = `animation-delay:${index * 55}ms`;
+      return `
+        <a class="project-card" href="${url}" target="_blank" rel="noopener" style="${delay}">
+          <div class="card-left">
+            <span class="card-index">${String(index + 1).padStart(2, '0')}</span>
+            <span class="card-name">${highlighted}</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </a>`;
+    }
+
     function render(repos) {
+      // 1. Filter: only Guion* repos, exclude blacklist
       const guion = repos
-        .filter(r => r.name.startsWith(PREFIX))
+        .filter(r => r.name.startsWith(PREFIX) && !EXCLUDE.includes(r.name))
         .sort((a, b) => a.name.localeCompare(b.name));
 
       if (guion.length === 0) {
@@ -297,23 +407,54 @@
         return;
       }
 
-      statusText.textContent = `${guion.length} proyecto${guion.length > 1 ? 's' : ''} encontrado${guion.length > 1 ? 's' : ''}`;
+      statusText.textContent = `${guion.length} proyecto${guion.length !== 1 ? 's' : ''} encontrado${guion.length !== 1 ? 's' : ''}`;
 
-      grid.innerHTML = guion.map((repo, i) => {
-        const url  = `https://${USERNAME}.github.io/${repo.name}/`;
-        const name = repo.name;
-        // Highlight the "Guion" prefix
-        const highlighted = `<em>${PREFIX}</em>${name.slice(PREFIX.length)}`;
-        const delay = `animation-delay:${i * 60}ms`;
-        return `
-          <a class="project-card" href="${url}" target="_blank" rel="noopener" style="${delay}">
-            <div class="card-left">
-              <span class="card-index">${String(i + 1).padStart(2, '0')}</span>
-              <span class="card-name">${highlighted}</span>
+      // 2. Detect groups
+      const validGroups = detectGroups(guion.map(r => r.name));
+
+      // 3. Bucket repos into groups and ungrouped
+      const grouped   = {}; // { segmentName: [repo, ...] }
+      const ungrouped = [];
+
+      for (const repo of guion) {
+        const seg = getSegment(repo.name, validGroups);
+        if (seg) {
+          if (!grouped[seg]) grouped[seg] = [];
+          grouped[seg].push(repo);
+        } else {
+          ungrouped.push(repo);
+        }
+      }
+
+      let cardIndex = 0;
+      let html = '';
+
+      // 4. Render each group
+      for (const [groupName, groupRepos] of Object.entries(grouped).sort()) {
+        html += `
+          <div class="group-block">
+            <div class="group-header">
+              <span class="group-title">${groupName}</span>
+              <span class="group-count">${groupRepos.length} repo${groupRepos.length !== 1 ? 's' : ''}</span>
+              <span class="group-line"></span>
             </div>
-            <span class="card-arrow">→</span>
-          </a>`;
-      }).join('');
+            ${groupRepos.map(r => cardHTML(r, cardIndex++)).join('')}
+          </div>`;
+      }
+
+      // 5. Render ungrouped
+      if (ungrouped.length > 0) {
+        html += `
+          <div class="group-block">
+            <div class="ungrouped-header">
+              <span class="ungrouped-title">Otros</span>
+              <span class="group-line"></span>
+            </div>
+            ${ungrouped.map(r => cardHTML(r, cardIndex++)).join('')}
+          </div>`;
+      }
+
+      grid.innerHTML = html;
     }
 
     (async () => {
